@@ -8,7 +8,6 @@ import imp
 import importlib.abc
 import logging
 import os
-import sys
 
 
 log = logging.getLogger(__name__)
@@ -21,12 +20,13 @@ class LocalModuleLoader(importlib.abc.SourceLoader):
         self._source_cache = {}
 
     def module_repr(self, module):
-        return '<urlmodule %r from %r>' % (module.__name__, module.__file__)
+        return '<module %r from %r>' % (module.__name__, module.__file__)
 
     # Required method
     def load_module(self, fullname):
         code = self.get_code(fullname)
-        mod = sys.modules.setdefault(fullname, imp.new_module(fullname))
+        #mod = sys.modules.setdefault(fullname, imp.new_module(fullname))
+        mod = imp.new_module(fullname)
         mod.__file__ = self.get_filename(fullname)
         mod.__loader__ = self
         mod.__package__ = fullname.rpartition('.')[0]

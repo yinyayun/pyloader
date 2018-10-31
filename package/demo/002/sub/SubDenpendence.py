@@ -6,4 +6,4 @@ Created on 2018年10月22日
 
 
 def calc():
-    return 3
+    return '002'
