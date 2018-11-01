@@ -6,11 +6,11 @@ Python动态加载实现方案：
 - 添加钩子函数，为指定目录绑定finder
 
 关于测试动态加载module目录结构(`/package/demo`） 说明
-（1）001和002为不同版本的实现
-（2）文件结构和文件名称都一致，唯一不同是sub.SubDenpendence.py的实现
-（3）ImportDemo依赖DenpendenceDemo，DenpendenceDemo依赖SubDenpendence
-(4)系统查找的基础路径为package/demo
-（5）py文件的中module基路径与sub同级
+- 001和002为不同版本的实现
+- 文件结构和文件名称都一致，唯一不同是sub.SubDenpendence.py的实现
+- ImportDemo依赖DenpendenceDemo，DenpendenceDemo依赖SubDenpendence
+- 系统查找的基础路径为package/demo
+- py文件的中module基路径与sub同级
 
 为了能够进行module的多版本加载，使用第二种和第三种都是可行的，但是第三种更为方便一点，该方便主要在从sys.modules中清除已经缓存的module。
 
