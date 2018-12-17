@@ -9,8 +9,6 @@ from loader.LocalModuleLoader import LocalModuleLoader
 class LocalPackageLoader(LocalModuleLoader):
     def load_module(self, fullname):
         mod = super().load_module(fullname)
-        mod.__path__ = [self._base]
-        mod.__package__ = fullname
 
     def get_filename(self, fullname):
         return self._base + '/' + '__init__.py'

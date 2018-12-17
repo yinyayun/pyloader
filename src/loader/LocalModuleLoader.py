@@ -11,8 +11,28 @@ import os
 
 
 log = logging.getLogger(__name__)
-# Module Loader for Local
 
+# Module Loader for Local
+class _installed_safely:
+
+    def __init__(self, module):
+        self._module = module
+        self.name = module.__name__
+
+    def __enter__(self):
+        # This must be done before putting the module in sys.modules
+        # (otherwise an optimization shortcut in import.c becomes
+        # wrong)
+        sys.modules[self.name] = self._module
+
+    def __exit__(self, *args):
+        if any(arg is not None for arg in args):
+            try:
+                del sys.modules[self.name]
+            except KeyError:
+                pass
+        else:
+            log.debug('import {!r} # LocalModuleLoader', self.name)
 
 class LocalModuleLoader(importlib.abc.SourceLoader):
     def __init__(self, base):
@@ -29,8 +49,13 @@ class LocalModuleLoader(importlib.abc.SourceLoader):
         mod = imp.new_module(fullname)
         mod.__file__ = self.get_filename(fullname)
         mod.__loader__ = self
-        mod.__package__ = fullname.rpartition('.')[0]
-        exec(code, mod.__dict__)
+        if self.is_package(fullname):
+          mod.__path__ = [self._base]
+          mod.__package__ = fullname
+        else:
+          mod.__package__ = fullname.rpartition('.')[0]
+        with _installed_safely(mod):
+          exec(code, mod.__dict__)
         return mod
 
     # Optional extensions

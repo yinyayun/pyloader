@@ -59,8 +59,10 @@ class LocalMetaFinder(importlib.abc.MetaPathFinder):
             if base not in self._loaders:
                 self._loaders[base] = LocalModuleLoader(base)
             return self._loaders[base]
-        else:
-            return None
+        filename = basename + '.so'
+        if filename in self._locals[base]:
+          return ExtensionFileLoader(fullname, base + '/' + filename)
+        return None
 
     def invalidate_caches(self):
         log.debug('invalidating link cache')
